@@ -1,5 +1,7 @@
 # Projeto React Native com typescript
 
+- Backend: [Ambiente avançado](https://github.com/mrcarromesa/gostack-gobarber-ts-arquitetura2)
+
 - Iniciando o projeto:
 
 ```bash
@@ -377,6 +379,59 @@ module.exports = function (api) {
 }
 
 ```
+
+---
+
+## Reactotron
+
+- Instale as seguintes dependencias:
+
+```bash
+yarn add reactotron-react-native reactotron-redux reactotron-redux-saga
+```
+
+```bash
+yarn add redux redux-saga react-redux
+```
+
+- Crie o arquivo `src/config/ReactotronConfig.ts`
+
+- Inicialmente adicionamos o seguinte conteúdo:
+
+```js
+import Reactotron from 'reactotron-react-native';
+import { reactotronRedux } from 'reactotron-redux';
+import sagaPlugin from 'reactotron-redux-saga';
+
+declare global {
+  interface Console {
+    tron: any;
+  }
+}
+
+if (__DEV__) {
+  const tron = Reactotron.configure()
+    .useReactNative()
+    .use(reactotronRedux())
+    .use(sagaPlugin({ except: [''] }))
+    .connect();
+
+  if (tron && tron.clear) {
+    tron.clear();
+  }
+
+  console.tron = tron;
+}
+
+
+```
+
+- Ajustamos no arquivo `src/App.tsx` é melhor adicionar antes da rota para conseguirmos adicionar o console.tron em mais lugares da aplicação
+
+```js
+import './config/ReactotronConfig';
+```
+
 
 ---
 
@@ -1034,3 +1089,63 @@ pod install
 - O único problema é que como é feito uma verificação disso no AsyncStorage e como isso é assincrono, irá aparecer um pequeno flash de uma rota para outra, devido a essa verificação, diferente do que acontece com a web.
 
 - Para resolver isso iremos utilizar um load que iremos controlar em `src/hooks/auth.tsx`
+
+
+---
+
+### Utilizar Flatlist com styled components
+
+- Um exemplo disso pode ser encontrado em `src/pages/Dashboard/index.tsx` e `src/pages/Dashboard/styles.tsx`:
+
+```tsx
+<ProviderList
+        data={providers}
+        keyExtractor={provider => provider.id}
+        renderItem={({ item }) => <Text>{item.name}</Text>}
+      />
+```
+
+```ts
+import { FlatList } from 'react-native';
+
+export const ProviderList = styled(FlatList as new () => FlatList<Provider>)``;
+```
+
+
+---
+
+### Date Picker para react native
+
+- Podemos utilizar essa lib: [DateTimePicker](https://github.com/react-native-datetimepicker/datetimepicker)
+
+- Instalação:
+
+```shell
+yarn add @react-native-community/datetimepicker
+```
+
+- Para IOS utilizar adicionalmente acessar a pasta `ios` e executar o comando:
+
+```shell
+pod install
+```
+
+---
+
+## Flipper debug com react native
+
+- Uma ferramenta para debugar o código é o [Flipper](https://fbflipper.com)
+- Só precisa baixar e utilizar!!!
+
+
+---
+
+## Obter imagem da galeria ou da camera
+
+- Para utilizar esse recurso iremos utilizar a lib [react native image picker](https://github.com/react-native-image-picker/react-native-image-picker)
+
+---
+
+## Editar imagem
+
+- Para realizar edição de imagens podemos utilizar o [Image Editor](https://github.com/callstack/react-native-image-editor)
