@@ -1149,3 +1149,94 @@ pod install
 ## Editar imagem
 
 - Para realizar edição de imagens podemos utilizar o [Image Editor](https://github.com/callstack/react-native-image-editor)
+
+
+---
+
+## Testes
+
+- A parte de testes do RN é praticamente identica ao ReactJS
+
+
+- Precisamos instalar o seguinte a [react-native-testing-library](https://github.com/callstack/react-native-testing-library):
+
+```shell
+yarn add @testing-library/react-native -D
+```
+
+- Adicionalmente instalamos o seguinte:
+
+```shell
+yarn add @testing-library/jest-native -D
+```
+
+- Precisamos adicionar isso no `package.json`:
+
+```json
+"jest": {
+  ...
+"setupFilesAfterEnv": ["@testing-library/jest-native/extend-expect"]
+}
+```
+
+- Para utilizar o root import adicione o seguinte ainda no `package.json` dentro de `jest`:
+
+```json
+"moduleNameMapper": {
+      "^~/(.*)": "<rootDir>/src/$1"
+    },
+```
+
+- Criamos o primeiro test em `src/__tests__/pages/SignIn.spec.tsx`
+
+- Nossa aplicação utiliza o AsyncStorage, precisamos realizar um mock dele, na documentação do AsyncStorage nos dá algumas alternativas: [AsyncStorage](https://react-native-async-storage.github.io/async-storage/docs/advanced/jest/)
+
+- Vamos criar o arquivo `src/setupTests.ts` com o seguinte conteúdo:
+
+```ts
+import mockAsyncStorage from '@react-native-async-storage/async-storage/jest/async-storage-mock';
+
+jest.mock('@react-native-async-storage/async-storage', () => mockAsyncStorage);
+
+```
+
+- No arquivo `package.json` precisamos adicionar dentro do jest:
+
+```json
+"setupFiles": ["./src/setupTests.ts"],
+```
+
+- Também precisamos adicionar o seguinte por causa do react native gesture handler, conforme documentação: [react-native-gesture-handler](https://docs.swmansion.com/react-native-gesture-handler/docs/) no arquivo `package.json` no `jest`:
+
+```json
+"setupFiles": ["./node_modules/react-native-gesture-handler/jestSetup.js"]
+```
+
+---
+
+### Mock react navigation
+
+- Para maioria das páginas precisamos realizar o mock do `react-navigation`:
+
+```tsx
+jest.mock('@react-navigation/native', () => {
+  return {
+    useNavigation: jest.fn()
+  }
+});
+```
+
+---
+
+### Coverage
+
+- podemos ajustar o coverage dos tests em `package.json` no jest:
+
+```json
+"collectCoverageFrom": [
+      "src/pages/**/*.tsx",
+      "src/components/**/**/*.tsx",
+      "src/hooks/*.tsx",
+      "!src/hooks/index.tsx"
+    ]
+```
